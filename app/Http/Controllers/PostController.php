@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Post;
 use App\Models\Category;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;
 use App\Http\Requests\PostStoreRequest;
 use App\Http\Requests\PostUpdateRequest;
 
@@ -111,6 +111,15 @@ class PostController extends Controller
     {
         $post = Post::findorFail($id);
         $post->delete();
+    }
+    public function search(Request $request)
+    {
+        $query = $request->input('query');
+
+        // Perform search query
+        $posts = Post::where('title', 'like', '%' . $query . '%')->get();
+
+        return response()->json($posts);
     }
 }
 

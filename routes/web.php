@@ -19,6 +19,7 @@ use App\Http\Controllers\ProfileController;
 
 Route::get('/',[PostController::class,'index'])->name('posts.index');
 
+Route::get('/search', [PostController::class,'search'])->name('post.search');
 
 
 Route::middleware(['auth'])->group(function () {

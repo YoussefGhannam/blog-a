@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Auth;
 
+use Illuminate\Support\Facades\Storage;
 use App\Models\User;
 use Illuminate\View\View;
 use Illuminate\Support\Str;
@@ -34,11 +35,21 @@ class RegisteredUserController extends Controller
         $request->validate([
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            'image' => ['nullable', 'image', 'max:2048'], // Validate the image file
         ]);
+
+        // Handle image upload
+        if ($request->hasFile('image')) {
+            $image = $request->file('image');
+            $imagePath = $image->store('users_images', 'public'); // Store in storage/users_images directory
+        } else {
+            $imagePath = null;
+        }
 
         $user = User::create([
             'email' => $request->email,
             'password' => Hash::make($request->password),
+            'image' => $imagePath, // Save the image path to the 'image' column
             'email_verified_at' => now(),
             'remember_token' => Str::random(10),
         ]);
